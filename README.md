@@ -2,7 +2,7 @@
 
 vjson is a JSON parser that adds support for variables.
 
-#### Examples
+### Examples
 
 The simplest example is
 
@@ -88,7 +88,7 @@ which would give you
 }
 ```
 
-#### Usage
+### Usage
 
 > **Note**
 > This library uses the `System.Text.Json` library for JSON parsing and serialization and does not handle any exceptions that may be thrown by that library. You should handle any thrown exception yourself.
@@ -107,10 +107,9 @@ string originalJson = File.ReadAllText("path/to/file.json");
 MyObject? convertedObject = VariableJson.Json.Deserialize<MyObject>(originalJson);
 ```
 
-> **Note**
-> `Deserialize<T>` returns a nullable type, just like `System.Text.Json.JsonSerializer.Deserialize<T>`.
+> **Note** > `Deserialize<T>` returns a nullable type, just like `System.Text.Json.JsonSerializer.Deserialize<T>`.
 
-#### VariableJsonOptions
+### VariableJsonOptions
 
 You can specify some options when parsing JSON using the `VariableJsonOptions` class.
 
@@ -127,7 +126,7 @@ The following options are available:
 `KeepVars` - Whether or not to keep the variable container in the output. Defaults to `false`. The variable container will be identical to the one in the input. It's value will not be resolved.
 `EmittedName` - The name of the variable container in the output. Defaults to `$vars`. Only used if `KeepVars` is `true`.
 
-#### JSON Schema
+### JSON Schema
 
 While vjson itself is valid JSON, it uses special markers to denote variables. This means that you can't use these same markers in string-type values. To identify that you want to use the variable value instead, you should wrap the variable name in `$(variableName)` and set it as a string value.
 
@@ -158,7 +157,7 @@ In the above example, this will cause variable lookups to be performed un the `m
 }
 ```
 
-#### Performance
+### Performance
 
 vjson deserializes the JSON document and then resolves variable references recursively. Once the document has been parsed, it then serializes the resultant object back to JSON to generated the final output. You can then use this output as you would with any JSON parsing library, such as `System.Text.Json` or `Newtonsoft.Json`, for example.
 
