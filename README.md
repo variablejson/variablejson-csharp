@@ -107,7 +107,8 @@ string originalJson = File.ReadAllText("path/to/file.json");
 MyObject? convertedObject = VariableJson.Json.Deserialize<MyObject>(originalJson);
 ```
 
-> **Note** > `Deserialize<T>` returns a nullable type, just like `System.Text.Json.JsonSerializer.Deserialize<T>`.
+> **Note**
+> `Deserialize<T>` returns a nullable type, just like `System.Text.Json.JsonSerializer.Deserialize<T>`.
 
 ### VariableJsonOptions
 
