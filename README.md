@@ -108,7 +108,7 @@ MyObject? convertedObject = VariableJson.Json.Deserialize<MyObject>(originalJson
 ```
 
 > **Note**
-> `Deserialize<T>` returns a nullable type, just like `System.Text.Json.JsonSerializer.Deserialize<T>`.
+> The `Deserialize<T>` method returns a nullable type, just like `System.Text.Json.JsonSerializer.Deserialize<T>`.
 
 ### VariableJsonOptions
 
@@ -122,9 +122,13 @@ string convertedJson = VariableJson.Json.Parse(originalJson, new VariableJsonOpt
 The following options are available:
 
 `VariableKey` - The name of the variable container. Defaults to `$vars`.
+
 `Delimiter` - The delimiter to use when parsing variables. Defaults to `.` (period). This string should not appear in any of your JSON key names.
+
 `MaxRecurse` - The maximum number of times to recurse when resolving variables. Defaults to 1024.
+
 `KeepVars` - Whether or not to keep the variable container in the output. Defaults to `false`. The variable container will be identical to the one in the input. It's value will not be resolved.
+
 `EmittedName` - The name of the variable container in the output. Defaults to `$vars`. Only used if `KeepVars` is `true`.
 
 ### JSON Schema
