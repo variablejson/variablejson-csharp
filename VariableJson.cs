@@ -10,14 +10,14 @@ public static class Json
         return JsonSerializer.Serialize(obj);
     }
 
+    public static T? Deserialize<T>(string json, VariableJsonOptions? options = default(VariableJsonOptions))
+    {
+        return JsonSerializer.Deserialize<T>(Parse(json, options));
+    }
+
     public static string Parse(string json, VariableJsonOptions? options = default(VariableJsonOptions))
     {
         return JsonSerializer.Serialize(new VariableJsonParser(json, options).Parse());
-    }
-
-    public static T? Deserialize<T>(string json, VariableJsonOptions? options = default(VariableJsonOptions))
-    {
-        return JsonSerializer.Deserialize<T>(JsonSerializer.Serialize(new VariableJsonParser(json, options).Parse()));
     }
 }
 
@@ -241,7 +241,7 @@ internal class VariableJsonParser
         return FindRefDFS(variables!, parts, key, out value);
     }
 
-    internal bool FindRefDFS(Dictionary<string, object?> tree, string[] path, string key, out object? value)
+    internal bool FindRefDFS(Dictionary<string, object?> node, string[] path, string key, out object? value)
     {
         recurse++;
         if (recurse > options.MaxRecurse)
@@ -249,9 +249,9 @@ internal class VariableJsonParser
             throw new Exception("Max recursion reached.");
         }
 
-        if (path.Length == 0 && tree.ContainsKey(key))
+        if (path.Length == 0 && node.ContainsKey(key))
         {
-            if (IsRef(tree[key], out string? variable))
+            if (IsRef(node[key], out string? variable))
             {
                 if (!(variable is not null && FindRef(variable, out value)))
                 {
@@ -260,13 +260,13 @@ internal class VariableJsonParser
 
                 return true;
             }
-            value = tree[key];
+            value = node[key];
             return true;
         }
 
-        if (tree.ContainsKey(path[0]))
+        if (node.ContainsKey(path[0]))
         {
-            return FindRefDFS(((JsonElement)tree[path[0]]!).Deserialize<Dictionary<string, object?>>()!, path[1..], key, out value);
+            return FindRefDFS(((JsonElement)node[path[0]]!).Deserialize<Dictionary<string, object?>>()!, path[1..], key, out value);
         }
 
         value = null;
