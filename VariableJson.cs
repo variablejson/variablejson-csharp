@@ -10,6 +10,11 @@ public static class Json
         return JsonSerializer.Serialize(obj);
     }
 
+    public static string Parse(string json, VariableJsonOptions? options = default(VariableJsonOptions))
+    {
+        return JsonSerializer.Serialize(new VariableJsonParser(json, options).Parse());
+    }
+
     public static T? Deserialize<T>(string json, VariableJsonOptions? options = default(VariableJsonOptions))
     {
         return JsonSerializer.Deserialize<T>(JsonSerializer.Serialize(new VariableJsonParser(json, options).Parse()));
