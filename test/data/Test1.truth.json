@@ -1,3 +1,13 @@
 {
-  "b": 1
+  "a": "a",
+  "b": 1,
+  "c": true,
+  "d": null,
+  "e": ["a", 1, false, null],
+  "f": {
+    "g": "a",
+    "h": 1,
+    "i": true,
+    "j": null
+  }
 }

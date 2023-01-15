@@ -14,14 +14,32 @@ public class Tests
         truthData = System.IO.File.ReadAllText($"./data/{testName}.truth.json");
     }
 
-    [Test]
-    public void Test1()
+    private void Test(string inputData, string truthData)
     {
-        LoadData(out string inputData, out string truthData);
-
         Dictionary<string, object?>? _jsonObject = Json.Deserialize<Dictionary<string, object?>>(inputData);
         Dictionary<string, object?>? truth = JsonSerializer.Deserialize<Dictionary<string, object?>>(truthData);
 
         Assert.That(Json.Serialize(truth!), Is.EqualTo(Json.Serialize(_jsonObject!)));
+    }
+
+    [Test]
+    public void Test1()
+    {
+        LoadData(out string inputData, out string truthData);
+        Test(inputData, truthData);
+    }
+
+    [Test]
+    public void Test2()
+    {
+        LoadData(out string inputData, out string truthData);
+        Test(inputData, truthData);
+    }
+
+    [Test]
+    public void Test3()
+    {
+        LoadData(out string inputData, out string truthData);
+        Test(inputData, truthData);
     }
 }
