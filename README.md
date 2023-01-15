@@ -1,5 +1,7 @@
 # vjson
 
+[![.NET](https://github.com/noahdavis319/vjson/actions/workflows/dotnet.yml/badge.svg?branch=main)](https://github.com/noahdavis319/vjson/actions/workflows/dotnet.yml)
+
 vjson is a JSON parser that adds support for variables.
 
 ### Examples
