@@ -153,7 +153,7 @@ string originalJson = File.ReadAllText("path/to/file.json");
 string convertedJson = VariableJson.Json.Parse(originalJson, new VariableJsonOptions { VariableKey = "myVars" });
 ```
 
-In the above example, this will cause variable lookups to be performed un the `myVars` object instead of the `$vars` object.
+In the above example, this will cause variable lookups to be performed in the `myVars` object instead of the `$vars` object.
 
 ```json
 {
