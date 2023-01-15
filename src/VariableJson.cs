@@ -34,9 +34,9 @@ internal class VariableJsonParser
 {
     private readonly string json;
     private readonly VariableJsonOptions options;
-    private readonly Dictionary<string, object?>? jsonObject;
-    private readonly Dictionary<string, object?>? variables = new();
-    private Dictionary<string, object?> outObject = new();
+    private readonly Dictionary<string, object>? jsonObject;
+    private readonly Dictionary<string, object>? variables = new();
+    private Dictionary<string, object> outObject = new();
     private int recurse = 0;
 
     public VariableJsonParser(string json, VariableJsonOptions? options)
@@ -44,16 +44,11 @@ internal class VariableJsonParser
         this.json = json;
         this.options = options ?? new VariableJsonOptions();
 
-        Dictionary<string, object?>? _jsonObject = JsonSerializer.Deserialize<Dictionary<string, object?>>(json);
+        Dictionary<string, object>? _jsonObject = JsonSerializer.Deserialize<Dictionary<string, object>>(json);
 
-        if (_jsonObject is null)
+        if (_jsonObject!.ContainsKey(this.options.VariableKey))
         {
-            throw new NullReferenceException("Deserialized json is null.");
-        }
-
-        if (_jsonObject.ContainsKey(this.options.VariableKey))
-        {
-            variables = JsonSerializer.Deserialize<Dictionary<string, object?>?>(_jsonObject[this.options.VariableKey]!.ToString()!)!;
+            variables = JsonSerializer.Deserialize<Dictionary<string, object>>(Json.Serialize(_jsonObject[this.options.VariableKey]));
 
             _jsonObject.Remove(this.options.VariableKey);
         }
@@ -61,7 +56,7 @@ internal class VariableJsonParser
         jsonObject = _jsonObject;
     }
 
-    internal Dictionary<string, object?>? Parse()
+    internal Dictionary<string, object>? Parse()
     {
         if (variables!.Count == 0)
         {
@@ -84,19 +79,15 @@ internal class VariableJsonParser
         {
             if (((JsonElement)node).ValueKind == JsonValueKind.Object)
             {
-                node = ((JsonElement)node).Deserialize<Dictionary<string, object?>>();
+                node = ((JsonElement)node).Deserialize<Dictionary<string, object>>();
             }
             else if (((JsonElement)node).ValueKind == JsonValueKind.Array)
             {
-                node = ((JsonElement)node).Deserialize<List<object?>>();
+                node = ((JsonElement)node).Deserialize<List<object>>();
             }
         }
 
-        if (node is null)
-        {
-            return;
-        }
-        else if (node is IDictionary)
+        if (node is IDictionary)
         {
             foreach (DictionaryEntry entry in (IDictionary)node)
             {
@@ -113,23 +104,7 @@ internal class VariableJsonParser
         else if (node is DictionaryEntry)
         {
             DictionaryEntry entry = (DictionaryEntry)node;
-
-            if (entry.Value is null)
-            {
-                InsertNode((Dictionary<string, object?>?)outNode, $"{path}{options.Delimiter}{entry.Key}", null);
-            }
-            else
-            {
-                switch (((JsonElement)entry.Value!).ValueKind)
-                {
-                    case JsonValueKind.Object:
-                        ParseDFS(entry.Value, outNode, $"{path}{options.Delimiter}{entry.Key}");
-                        break;
-                    default:
-                        InsertNode((Dictionary<string, object?>?)outNode, $"{path}{options.Delimiter}{entry.Key}", entry.Value);
-                        break;
-                }
-            }
+            InsertNode((Dictionary<string, object?>?)outNode, $"{path}{options.Delimiter}{entry.Key}", entry.Value);
         }
     }
 
@@ -138,7 +113,7 @@ internal class VariableJsonParser
         if (IsRef(value, out string? variable))
         {
             recurse = 0;
-            if (!(variable is not null && FindRef(variable, out value)))
+            if (!FindRef(variable!, out value))
             {
                 throw new KeyNotFoundException($"Variable {variable} not found.");
             }
@@ -146,45 +121,25 @@ internal class VariableJsonParser
 
         ParsePath(path, out string[] parts, out string key);
 
-        InsertNodeDFS(node, parts, key, value);
-    }
-
-    internal void InsertNodeDFS(ICollection? node, string[] path, string key, object? value)
-    {
-        if (path.Length == 0)
+        if (value is null)
         {
-            if (value is null)
-            {
-                InsertNodeUntyped(node, null, key);
-            }
-            else if (((JsonElement)value!).ValueKind == JsonValueKind.Object)
-            {
-                Dictionary<string, object?>? vnode = new();
-                ParseDFS(value, vnode);
-                InsertNodeUntyped(node, vnode, key);
-            }
-            else if (((JsonElement)value!).ValueKind == JsonValueKind.Array)
-            {
-                List<object?> vnode = new();
-                ParseDFS(value, vnode);
-                InsertNodeUntyped(node, vnode, key);
-            }
-            else
-            {
-                InsertNodeUntyped(node, value, key);
-            }
-            return;
+            InsertNodeUntyped(node, null, key);
         }
-
-        if (node is IDictionary)
+        else if (((JsonElement)value!).ValueKind == JsonValueKind.Object)
         {
-            Dictionary<string, object?>? dNode = (Dictionary<string, object?>?)node;
-            if (!dNode!.ContainsKey(path[0]))
-            {
-                dNode[path[0]] = new Dictionary<string, object>();
-            }
-
-            InsertNodeDFS((Dictionary<string, object?>)dNode[path[0]]!, path[1..], key, value);
+            Dictionary<string, object?>? vnode = new();
+            ParseDFS(value, vnode);
+            InsertNodeUntyped(node, vnode, key);
+        }
+        else if (((JsonElement)value!).ValueKind == JsonValueKind.Array)
+        {
+            List<object?> vnode = new();
+            ParseDFS(value, vnode);
+            InsertNodeUntyped(node, vnode, key);
+        }
+        else
+        {
+            InsertNodeUntyped(node, value, key);
         }
     }
 
@@ -216,7 +171,7 @@ internal class VariableJsonParser
     {
         variable = null;
 
-        if ((value is not JsonElement) && (value as JsonElement?)?.ValueKind != JsonValueKind.String)
+        if ((value as JsonElement?)?.ValueKind != JsonValueKind.String)
         {
             return false;
         }
@@ -238,24 +193,19 @@ internal class VariableJsonParser
         return FindRefDFS(variables!, parts, key, out value);
     }
 
-    internal bool FindRefDFS(Dictionary<string, object?> node, string[] path, string key, out object? value)
+    internal bool FindRefDFS(Dictionary<string, object> node, string[] path, string key, out object? value)
     {
         recurse++;
         if (recurse > options.MaxRecurse)
         {
-            throw new Exception("Max recursion reached.");
+            throw new StackOverflowException("Max recursion reached.");
         }
 
         if (path.Length == 0 && node.ContainsKey(key))
         {
             if (IsRef(node[key], out string? variable))
             {
-                if (!(variable is not null && FindRef(variable, out value)))
-                {
-                    throw new KeyNotFoundException($"Variable {variable} not found.");
-                }
-
-                return true;
+                return FindRef(variable!, out value);
             }
 
             value = node[key];
