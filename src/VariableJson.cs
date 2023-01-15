@@ -5,7 +5,7 @@ namespace VariableJson;
 
 public static class Json
 {
-    public static string Serialize(object obj)
+    public static string Serialize(object? obj)
     {
         return JsonSerializer.Serialize(obj);
     }
@@ -257,11 +257,12 @@ internal class VariableJsonParser
 
                 return true;
             }
+
             value = node[key];
             return true;
         }
 
-        if (node.ContainsKey(path[0]))
+        if (path.Length > 0 && node.ContainsKey(path[0]))
         {
             return FindRefDFS(((JsonElement)node[path[0]]!).Deserialize<Dictionary<string, object?>>()!, path[1..], key, out value);
         }

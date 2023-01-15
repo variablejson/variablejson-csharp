@@ -19,7 +19,10 @@ public class Tests
         Dictionary<string, object?>? _jsonObject = Json.Deserialize<Dictionary<string, object?>>(inputData);
         Dictionary<string, object?>? truth = JsonSerializer.Deserialize<Dictionary<string, object?>>(truthData);
 
-        Assert.That(Json.Serialize(truth!), Is.EqualTo(Json.Serialize(_jsonObject!)));
+        string truthString = JsonSerializer.Serialize(truth);
+        string inputString = Json.Serialize(_jsonObject);
+
+        Assert.That(truthString, Is.EqualTo(inputString));
     }
 
     [Test]
@@ -41,5 +44,22 @@ public class Tests
     {
         LoadData(out string inputData, out string truthData);
         Test(inputData, truthData);
+    }
+
+    [Test]
+    public void Test4()
+    {
+        LoadData(out string inputData, out string truthData);
+        Assert.Throws<KeyNotFoundException>(() => Test(inputData, truthData));
+    }
+
+    [Test]
+    public void Test5()
+    {
+        LoadData(out string inputData, out string truthData);
+        Exception? ex = Assert.Throws<Exception>(() => Test(inputData, truthData));
+
+        Assert.NotNull(ex);
+        Assert.That(ex!.Message, Is.EqualTo("Max recursion reached."));
     }
 }
