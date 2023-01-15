@@ -5,16 +5,6 @@ namespace VariableJson;
 
 public static class Json
 {
-    public static string Serialize(object? obj)
-    {
-        return JsonSerializer.Serialize(obj);
-    }
-
-    public static T? Deserialize<T>(string json, VariableJsonOptions? options = default(VariableJsonOptions))
-    {
-        return JsonSerializer.Deserialize<T>(Parse(json, options));
-    }
-
     public static string Parse(string json, VariableJsonOptions? options = default(VariableJsonOptions))
     {
         return JsonSerializer.Serialize(new VariableJsonParser(json, options).Parse());
@@ -48,7 +38,7 @@ internal class VariableJsonParser
 
         if (_jsonObject!.ContainsKey(this.options.VariableKey))
         {
-            variables = JsonSerializer.Deserialize<Dictionary<string, object>>(Json.Serialize(_jsonObject[this.options.VariableKey]));
+            variables = JsonSerializer.Deserialize<Dictionary<string, object>>(JsonSerializer.Serialize(_jsonObject[this.options.VariableKey]));
 
             _jsonObject.Remove(this.options.VariableKey);
         }

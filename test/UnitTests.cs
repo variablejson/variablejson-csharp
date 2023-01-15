@@ -14,13 +14,13 @@ public class Tests
         truthData = System.IO.File.ReadAllText($"./data/{testName}.truth.json");
     }
 
-    private void Test(string inputData, string truthData)
+    private void GenericTest(string inputData, string truthData)
     {
-        Dictionary<string, object?>? _jsonObject = Json.Deserialize<Dictionary<string, object?>>(inputData);
+        Dictionary<string, object?>? _jsonObject = JsonSerializer.Deserialize<Dictionary<string, object?>>(Json.Parse(inputData));
         Dictionary<string, object?>? truth = JsonSerializer.Deserialize<Dictionary<string, object?>>(truthData);
 
         string truthString = JsonSerializer.Serialize(truth);
-        string inputString = Json.Serialize(_jsonObject);
+        string inputString = JsonSerializer.Serialize(_jsonObject);
 
         Assert.That(inputString, Is.EqualTo(truthString));
     }
@@ -29,35 +29,35 @@ public class Tests
     public void Test1()
     {
         LoadData(out string inputData, out string truthData);
-        Test(inputData, truthData);
+        GenericTest(inputData, truthData);
     }
 
     [Test]
     public void Test2()
     {
         LoadData(out string inputData, out string truthData);
-        Test(inputData, truthData);
+        GenericTest(inputData, truthData);
     }
 
     [Test]
     public void Test3()
     {
         LoadData(out string inputData, out string truthData);
-        Test(inputData, truthData);
+        GenericTest(inputData, truthData);
     }
 
     [Test]
     public void Test4()
     {
         LoadData(out string inputData, out string truthData);
-        Assert.Throws<KeyNotFoundException>(() => Test(inputData, truthData));
+        Assert.Throws<KeyNotFoundException>(() => GenericTest(inputData, truthData));
     }
 
     [Test]
     public void Test5()
     {
         LoadData(out string inputData, out string truthData);
-        StackOverflowException? ex = Assert.Throws<StackOverflowException>(() => Test(inputData, truthData));
+        StackOverflowException? ex = Assert.Throws<StackOverflowException>(() => GenericTest(inputData, truthData));
 
         Assert.NotNull(ex);
         Assert.That(ex!.Message, Is.EqualTo("Max recursion reached."));
@@ -67,14 +67,14 @@ public class Tests
     public void Test6()
     {
         LoadData(out string inputData, out string truthData);
-        Test(inputData, truthData);
+        GenericTest(inputData, truthData);
     }
 
     [Test]
     public void Test7()
     {
         LoadData(out string inputData, out string truthData);
-        Test(inputData, truthData);
+        GenericTest(inputData, truthData);
     }
 
     [Test]
@@ -87,11 +87,11 @@ public class Tests
             VariableKey = "$variables"
         };
 
-        Dictionary<string, object?>? _jsonObject = Json.Deserialize<Dictionary<string, object?>>(inputData, options);
+        Dictionary<string, object?>? _jsonObject = JsonSerializer.Deserialize<Dictionary<string, object?>>(Json.Parse(inputData, options));
         Dictionary<string, object?>? truth = JsonSerializer.Deserialize<Dictionary<string, object?>>(truthData);
 
         string truthString = JsonSerializer.Serialize(truth);
-        string inputString = Json.Serialize(_jsonObject);
+        string inputString = JsonSerializer.Serialize(_jsonObject);
 
         Assert.That(inputString, Is.EqualTo(truthString));
     }
@@ -106,11 +106,11 @@ public class Tests
             KeepVars = true
         };
 
-        Dictionary<string, object?>? _jsonObject = Json.Deserialize<Dictionary<string, object?>>(inputData, options);
+        Dictionary<string, object?>? _jsonObject = JsonSerializer.Deserialize<Dictionary<string, object?>>(Json.Parse(inputData, options));
         Dictionary<string, object?>? truth = JsonSerializer.Deserialize<Dictionary<string, object?>>(truthData);
 
         string truthString = JsonSerializer.Serialize(truth);
-        string inputString = Json.Serialize(_jsonObject);
+        string inputString = JsonSerializer.Serialize(_jsonObject);
 
         Assert.That(inputString, Is.EqualTo(truthString));
     }
@@ -119,14 +119,14 @@ public class Tests
     public void Test10()
     {
         LoadData(out string inputData, out string truthData);
-        Exception? ex = Assert.Throws<JsonException>(() => Test(inputData, truthData));
+        Exception? ex = Assert.Throws<JsonException>(() => GenericTest(inputData, truthData));
     }
 
     [Test]
     public void Test11()
     {
         LoadData(out string inputData, out string truthData);
-        KeyNotFoundException? ex = Assert.Throws<KeyNotFoundException>(() => Test(inputData, truthData));
+        KeyNotFoundException? ex = Assert.Throws<KeyNotFoundException>(() => GenericTest(inputData, truthData));
 
         Assert.NotNull(ex);
         Assert.That(ex!.Message, Is.EqualTo("Variable john.name not found."));
