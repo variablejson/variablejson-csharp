@@ -125,9 +125,6 @@ internal class VariableJsonParser
                     case JsonValueKind.Object:
                         ParseDFS(entry.Value, outNode, $"{path}{options.Delimiter}{entry.Key}");
                         break;
-                    case JsonValueKind.Array:
-                        InsertNode((Dictionary<string, object?>?)outNode, $"{path}{options.Delimiter}{entry.Key}", entry.Value);
-                        break;
                     default:
                         InsertNode((Dictionary<string, object?>?)outNode, $"{path}{options.Delimiter}{entry.Key}", entry.Value);
                         break;
