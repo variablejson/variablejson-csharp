@@ -45,7 +45,7 @@ which generates
 }
 ```
 
-You can nest objects and arrays with eachother and all other non-complex data types. Here is a complex sample
+You can nest objects and arrays with each other and all other non-complex data types. Here is a complex sample
 
 ```json
 {
