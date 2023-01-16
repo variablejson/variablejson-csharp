@@ -29,7 +29,7 @@ internal class VariableJsonParser
     private Dictionary<string, object> outObject = new();
     private int recurse = 0;
 
-    public VariableJsonParser(string json, VariableJsonOptions? options)
+    internal VariableJsonParser(string json, VariableJsonOptions? options)
     {
         this.json = json;
         this.options = options ?? new VariableJsonOptions();
