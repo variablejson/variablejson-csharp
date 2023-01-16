@@ -1,6 +1,6 @@
 # VariableJson (vjson)
 
-![GitHub](https://img.shields.io/github/license/noahdavis319/vjson) [![.NET](https://github.com/noahdavis319/vjson/actions/workflows/dotnet.yml/badge.svg?branch=main)](https://github.com/noahdavis319/vjson/actions/workflows/dotnet.yml) ![](https://img.shields.io/badge/-.NET%206.0-blueviolet) ![Nuget](https://img.shields.io/nuget/dt/VariableJson) ![Nuget](https://img.shields.io/nuget/v/VariableJson) ![Nuget (with prereleases)](https://img.shields.io/nuget/vpre/VariableJson?label=nuget-latest)
+![GitHub](https://img.shields.io/github/license/noahdavis319/vjson) [![.NET](https://github.com/noahdavis319/vjson/actions/workflows/dotnet.yml/badge.svg?branch=main)](https://github.com/noahdavis319/vjson/actions/workflows/dotnet.yml) ![.NET 6](https://img.shields.io/badge/-.NET%206.0-blueviolet) [![Nuget](https://img.shields.io/nuget/dt/VariableJson) ![Nuget](https://img.shields.io/nuget/v/VariableJson) ![Nuget (with prereleases)](https://img.shields.io/nuget/vpre/VariableJson?label=nuget-latest)](https://www.nuget.org/packages/VariableJson/)
 
 vjson is a JSON parser that adds support for variables.
 
