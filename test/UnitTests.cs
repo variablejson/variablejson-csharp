@@ -175,10 +175,10 @@ public class Tests
     public void Test17()
     {
         LoadData(out string inputData, out string truthData);
-        KeyNotFoundException? ex = Assert.Throws<KeyNotFoundException>(() => GenericTest(inputData, truthData));
+        IndexOutOfRangeException? ex = Assert.Throws<IndexOutOfRangeException>(() => GenericTest(inputData, truthData));
 
         Assert.NotNull(ex);
-        Assert.That(ex!.Message, Is.EqualTo("Variable a.1 not found."));
+        Assert.That(ex!.Message, Is.EqualTo("Index 1 out of range."));
     }
 
     [Test]
@@ -192,10 +192,10 @@ public class Tests
     public void Test19()
     {
         LoadData(out string inputData, out string truthData);
-        KeyNotFoundException? ex = Assert.Throws<KeyNotFoundException>(() => GenericTest(inputData, truthData));
+        InvalidOperationException? ex = Assert.Throws<InvalidOperationException>(() => GenericTest(inputData, truthData));
 
         Assert.NotNull(ex);
-        Assert.That(ex!.Message, Is.EqualTo("Variable a.a not found."));
+        Assert.That(ex!.Message, Is.EqualTo("Index \"a\" is not an integer."));
     }
 
     [Test]

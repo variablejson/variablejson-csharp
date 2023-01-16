@@ -257,6 +257,14 @@ internal class VariableJsonParser
                             return true;
                         }
                     }
+                    else
+                    {
+                        throw new IndexOutOfRangeException($"Index {index} out of range.");
+                    }
+                }
+                else
+                {
+                    throw new InvalidOperationException($"Index \"{key.ToString()}\" is not an integer.");
                 }
             }
         }
