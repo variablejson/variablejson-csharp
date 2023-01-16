@@ -90,6 +90,39 @@ which would give you
 }
 ```
 
+You can reference objects and values that are in an array by specifying the index
+
+```json
+{
+  "$vars": {
+    "array": [1, false, true, "hello, world!", null]
+  },
+  "first": "$(array.0)"
+}
+```
+
+which would produce
+
+```json
+{
+  "first": 1
+}
+```
+
+You cannot reference objects that are not stored in the variable container. For example, this will not work
+
+```json
+{
+  "$vars": {
+    "hello": "world!"
+  },
+  "fizz": "$(buzz)",
+  "buzz": "$(hello)"
+}
+```
+
+This will throw an exception because `fizz` references a variable that does not exist in the variable container.
+
 ### Usage
 
 > **Note**

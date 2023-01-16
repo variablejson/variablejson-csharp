@@ -183,7 +183,7 @@ internal class VariableJsonParser
         return FindRefDFS(variables!, parts, key, out value);
     }
 
-    internal bool FindRefDFS(Dictionary<string, object> node, string[] path, string key, out object? value)
+    internal bool FindRefDFS(ICollection node, string[] path, object key, out object? value)
     {
         recurse++;
         if (recurse > options.MaxRecurse)
@@ -191,23 +191,83 @@ internal class VariableJsonParser
             throw new StackOverflowException("Max recursion reached.");
         }
 
-        if (path.Length == 0 && node.ContainsKey(key))
+        if (node is IDictionary)
         {
-            if (IsRef(node[key], out string? variable))
+            if (path.Length > 0)
             {
-                return FindRef(variable!, out value);
+                JsonElement jsonElement = (JsonElement)((IDictionary)node)[path[0]]!;
+                if (IsRef(jsonElement, out string? variable))
+                {
+                    FindRef(variable!, out object? refNode);
+                    var refJsonElement = (JsonElement)refNode!;
+                    return FindRefDFS(CastToICollection((JsonElement)refNode!), path[1..], key, out value);
+                }
+                else
+                {
+                    return FindRefDFS(CastToICollection(jsonElement), path[1..], key, out value);
+                }
             }
+            else
+            {
+                if (((IDictionary)node).Contains(key))
+                {
+                    value = ((IDictionary)node)[key];
 
-            value = node[key];
-            return true;
+                    if (IsRef(value, out string? variable))
+                    {
+                        return FindRef(variable!, out value);
+                    }
+
+                    return true;
+                }
+            }
         }
-
-        if (path.Length > 0 && node.ContainsKey(path[0]))
+        else if (node is IList)
         {
-            return FindRefDFS(((JsonElement)node[path[0]]!).Deserialize<Dictionary<string, object?>>()!, path[1..], key, out value);
+            if (path.Length > 0)
+            {
+                int.TryParse(path[0], out int index);
+                JsonElement jsonElement = (JsonElement)((IList)node)[index]!;
+                IsRef(jsonElement, out string? variable);
+                FindRef(variable!, out object? refNode);
+                JsonElement refJsonElement = (JsonElement)refNode!;
+                return FindRefDFS(CastToICollection(refJsonElement), path[1..], key, out value);
+            }
+            else
+            {
+                if (int.TryParse(key.ToString(), out int index))
+                {
+                    if (index < ((IList)node).Count)
+                    {
+                        JsonElement jsonElement = (JsonElement)((IList)node)[index]!;
+                        if (IsRef(jsonElement, out string? variable))
+                        {
+                            FindRef(variable!, out object? refNode);
+                            JsonElement refJsonElement = (JsonElement)refNode!;
+                            value = refJsonElement;
+                            return true;
+                        }
+                        else
+                        {
+                            value = jsonElement;
+                            return true;
+                        }
+                    }
+                }
+            }
         }
 
         value = null;
         return false;
+    }
+
+    internal ICollection CastToICollection(JsonElement jsonElement)
+    {
+        if (jsonElement.ValueKind == JsonValueKind.Object)
+        {
+            return jsonElement.Deserialize<Dictionary<string, object>>()!;
+        }
+
+        return jsonElement.Deserialize<List<object>>()!;
     }
 }

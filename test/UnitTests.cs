@@ -57,6 +57,7 @@ public class Tests
     public void Test5()
     {
         LoadData(out string inputData, out string truthData);
+
         StackOverflowException? ex = Assert.Throws<StackOverflowException>(() => GenericTest(inputData, truthData));
 
         Assert.NotNull(ex);
@@ -130,5 +131,77 @@ public class Tests
 
         Assert.NotNull(ex);
         Assert.That(ex!.Message, Is.EqualTo("Variable john.name not found."));
+    }
+
+    [Test]
+    public void Test12()
+    {
+        LoadData(out string inputData, out string truthData);
+        KeyNotFoundException? ex = Assert.Throws<KeyNotFoundException>(() => GenericTest(inputData, truthData));
+
+        Assert.NotNull(ex);
+        Assert.That(ex!.Message, Is.EqualTo("Variable buzz not found."));
+    }
+
+    [Test]
+    public void Test13()
+    {
+        LoadData(out string inputData, out string truthData);
+        GenericTest(inputData, truthData);
+    }
+
+    [Test]
+    public void Test14()
+    {
+        LoadData(out string inputData, out string truthData);
+        GenericTest(inputData, truthData);
+    }
+
+    [Test]
+    public void Test15()
+    {
+        LoadData(out string inputData, out string truthData);
+        GenericTest(inputData, truthData);
+    }
+
+    [Test]
+    public void Test16()
+    {
+        LoadData(out string inputData, out string truthData);
+        GenericTest(inputData, truthData);
+    }
+
+    [Test]
+    public void Test17()
+    {
+        LoadData(out string inputData, out string truthData);
+        KeyNotFoundException? ex = Assert.Throws<KeyNotFoundException>(() => GenericTest(inputData, truthData));
+
+        Assert.NotNull(ex);
+        Assert.That(ex!.Message, Is.EqualTo("Variable a.1 not found."));
+    }
+
+    [Test]
+    public void Test18()
+    {
+        LoadData(out string inputData, out string truthData);
+        GenericTest(inputData, truthData);
+    }
+
+    [Test]
+    public void Test19()
+    {
+        LoadData(out string inputData, out string truthData);
+        KeyNotFoundException? ex = Assert.Throws<KeyNotFoundException>(() => GenericTest(inputData, truthData));
+
+        Assert.NotNull(ex);
+        Assert.That(ex!.Message, Is.EqualTo("Variable a.a not found."));
+    }
+
+    [Test]
+    public void Test20()
+    {
+        LoadData(out string inputData, out string truthData);
+        GenericTest(inputData, truthData);
     }
 }
