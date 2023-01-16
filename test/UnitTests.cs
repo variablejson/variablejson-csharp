@@ -204,4 +204,24 @@ public class Tests
         LoadData(out string inputData, out string truthData);
         GenericTest(inputData, truthData);
     }
+
+    [Test]
+    public void Test21()
+    {
+        LoadData(out string inputData, out string truthData);
+        KeyNotFoundException? ex = Assert.Throws<KeyNotFoundException>(() => GenericTest(inputData, truthData));
+
+        Assert.NotNull(ex);
+        Assert.That(ex!.Message, Is.EqualTo("Invalid path d.z"));
+    }
+
+    [Test]
+    public void Test22()
+    {
+        LoadData(out string inputData, out string truthData);
+        KeyNotFoundException? ex = Assert.Throws<KeyNotFoundException>(() => GenericTest(inputData, truthData));
+
+        Assert.NotNull(ex);
+        Assert.That(ex!.Message, Is.EqualTo("Variable c.d.z not found."));
+    }
 }

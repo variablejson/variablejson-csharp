@@ -205,7 +205,14 @@ internal class VariableJsonParser
                 }
                 else
                 {
-                    return FindRefDFS(CastToICollection(jsonElement), path[1..], key, out value);
+                    if (jsonElement.ValueKind == JsonValueKind.Object || jsonElement.ValueKind == JsonValueKind.Array)
+                    {
+                        return FindRefDFS(CastToICollection(jsonElement), path[1..], key, out value);
+                    }
+                    else
+                    {
+                        throw new KeyNotFoundException($"Invalid path {string.Join(options.Delimiter, path)}{options.Delimiter}{key}");
+                    }
                 }
             }
             else
