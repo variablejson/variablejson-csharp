@@ -264,7 +264,7 @@ internal class VariableJsonParser
                 }
                 else
                 {
-                    throw new InvalidOperationException($"Index \"{key.ToString()}\" is not an integer.");
+                    throw new InvalidOperationException($"Index \"{key}\" is not an integer.");
                 }
             }
         }
