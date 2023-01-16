@@ -199,7 +199,8 @@ internal class VariableJsonParser
                 if (IsRef(jsonElement, out string? variable))
                 {
                     FindRef(variable!, out object? refNode);
-                    var refJsonElement = (JsonElement)refNode!;
+                    JsonElement refJsonElement = (JsonElement)refNode!;
+
                     return FindRefDFS(CastToICollection((JsonElement)refNode!), path[1..], key, out value);
                 }
                 else
@@ -228,9 +229,12 @@ internal class VariableJsonParser
             {
                 int.TryParse(path[0], out int index);
                 JsonElement jsonElement = (JsonElement)((IList)node)[index]!;
+
                 IsRef(jsonElement, out string? variable);
                 FindRef(variable!, out object? refNode);
+
                 JsonElement refJsonElement = (JsonElement)refNode!;
+
                 return FindRefDFS(CastToICollection(refJsonElement), path[1..], key, out value);
             }
             else
