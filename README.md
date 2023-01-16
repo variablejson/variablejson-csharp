@@ -128,22 +128,12 @@ This will throw an exception because `fizz` references a variable that does not 
 > **Note**
 > This library uses the `System.Text.Json` library for JSON parsing and serialization and does not handle any exceptions that may be thrown by that library. You should handle any thrown exception yourself.
 
-If you want to just generate the converted JSON, you can use the `Json.Parse` method.
+Variable Json only parses and produces JSON, it does not provide a mechanism for deserializing the JSON into an object. You can use `System.Text.Json`, `Newtonsoft.Json`, or any other JSON library to deserialize the JSON into an object.
 
 ```csharp
 string originalJson = File.ReadAllText("path/to/file.json");
 string convertedJson = VariableJson.Json.Parse(originalJson);
 ```
-
-If you'd instead like to deserialize the JSON document directly to a C# object, you can use the `Json.Deserialize<T>` method.
-
-```csharp
-string originalJson = File.ReadAllText("path/to/file.json");
-MyObject? convertedObject = VariableJson.Json.Deserialize<MyObject>(originalJson);
-```
-
-> **Note**
-> The `Deserialize<T>` method returns a nullable type, just like `System.Text.Json.JsonSerializer.Deserialize<T>`.
 
 ### VariableJsonOptions
 

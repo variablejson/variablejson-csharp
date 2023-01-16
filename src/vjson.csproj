@@ -1,9 +1,22 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <PackageId>VariableJson</PackageId>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageTags>json</PackageTags>
+    <Authors>Noah Davis</Authors>
+    <Description>Variable JSON is a library for parsing JSON files with in-JSON variable support.</Description>
+    <RepositoryUrl>https://github.com/noahdavis319/vjson</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
   
 </Project>
