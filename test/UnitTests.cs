@@ -120,7 +120,7 @@ public class Tests
     public void Test10()
     {
         LoadData(out string inputData, out string truthData);
-        Exception? ex = Assert.Throws<JsonException>(() => GenericTest(inputData, truthData));
+        JsonException? ex = Assert.Throws<JsonException>(() => GenericTest(inputData, truthData));
     }
 
     [Test]
