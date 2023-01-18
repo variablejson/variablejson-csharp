@@ -4,6 +4,10 @@
 
 vjson is a JSON parser that adds support for variables.
 
+Supported languages
+ - [C#](https://github.com/noahdavis319/vjson)
+ - [JavaScript](https://github.com/noahdavis319/vjson-js)
+
 ### Examples
 
 The simplest example is
@@ -128,7 +132,7 @@ This will throw an exception because `fizz` references a variable that does not 
 > **Note**
 > This library uses the `System.Text.Json` library for JSON parsing and serialization and does not handle any exceptions that may be thrown by that library. You should handle any thrown exception yourself.
 
-Variable Json only parses and produces JSON, it does not provide a mechanism for deserializing the JSON into an object. You can use `System.Text.Json`, `Newtonsoft.Json`, or any other JSON library to deserialize the JSON into an object.
+VariableJson only parses and produces JSON, it does not provide a mechanism for deserializing the JSON into an object. You can use `System.Text.Json`, `Newtonsoft.Json`, or any other JSON library to deserialize the JSON into an object.
 
 ```csharp
 string originalJson = File.ReadAllText("path/to/file.json");
