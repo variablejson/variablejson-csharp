@@ -48,16 +48,11 @@ internal class VariableJsonParser
 
     internal Dictionary<string, object>? Parse()
     {
-        if (variables!.Count == 0)
-        {
-            return jsonObject;
-        }
-
         ParseDFS(jsonObject, outObject);
 
-        if (options.KeepVars)
+        if (options.KeepVars && variables!.Count > 0)
         {
-            outObject.Add(options.EmittedName, variables);
+            outObject.Add(options.EmittedName, variables!);
         }
 
         return outObject;
@@ -100,12 +95,19 @@ internal class VariableJsonParser
 
     internal void InsertNode(ICollection? node, string path, object? value)
     {
-        if (IsRef(value, out string? variable))
+        if (variables!.Count > 0 && IsJSONRef(value, out string? variable))
         {
             recurse = 0;
-            if (!FindRef(variable!, out value))
+            if (!FindJSONRef(variable!, out value))
             {
                 throw new KeyNotFoundException($"Variable {variable} not found.");
+            }
+        }
+        else if (IsEnvRef(value, out variable))
+        {
+            if (!FindEnvRef(variable!, out value))
+            {
+                throw new KeyNotFoundException($"Environment variable {variable} not found.");
             }
         }
 
@@ -114,6 +116,10 @@ internal class VariableJsonParser
         if (value is null)
         {
             InsertNodeUntyped(node, null, key);
+        }
+        else if (value is string)
+        {
+            InsertNodeUntyped(node, value, key);
         }
         else if (((JsonElement)value!).ValueKind == JsonValueKind.Object)
         {
@@ -157,7 +163,7 @@ internal class VariableJsonParser
         parts = parts[..^1];
     }
 
-    internal bool IsRef(object? value, out string? variable)
+    internal bool IsJSONRef(object? value, out string? variable)
     {
         variable = null;
 
@@ -176,11 +182,37 @@ internal class VariableJsonParser
         return isRef;
     }
 
-    internal bool FindRef(string variable, out object? value)
+    internal bool FindJSONRef(string variable, out object? value)
     {
         ParsePath(variable, out string[] parts, out string key);
 
         return FindRefDFS(variables!, parts, key, out value);
+    }
+
+    internal bool IsEnvRef(object? value, out string? variable)
+    {
+        variable = null;
+
+        if ((value as JsonElement?)?.ValueKind != JsonValueKind.String)
+        {
+            return false;
+        }
+
+        bool isRef = value!.ToString()!.Length > 3 && value.ToString()!.StartsWith("$[") && value.ToString()!.EndsWith("]");
+
+        if (isRef)
+        {
+            variable = value.ToString()![2..^1];
+        }
+
+        return isRef;
+    }
+
+    internal bool FindEnvRef(string variable, out object? value)
+    {
+        value = Environment.GetEnvironmentVariable(variable);
+
+        return value != null;
     }
 
     internal bool FindRefDFS(ICollection node, string[] path, object key, out object? value)
@@ -196,9 +228,9 @@ internal class VariableJsonParser
             if (path.Length > 0)
             {
                 JsonElement jsonElement = (JsonElement)((IDictionary)node)[path[0]]!;
-                if (IsRef(jsonElement, out string? variable))
+                if (IsJSONRef(jsonElement, out string? variable))
                 {
-                    FindRef(variable!, out object? refNode);
+                    FindJSONRef(variable!, out object? refNode);
                     JsonElement refJsonElement = (JsonElement)refNode!;
 
                     return FindRefDFS(CastToICollection((JsonElement)refNode!), path[1..], key, out value);
@@ -221,9 +253,13 @@ internal class VariableJsonParser
                 {
                     value = ((IDictionary)node)[key];
 
-                    if (IsRef(value, out string? variable))
+                    if (IsJSONRef(value, out string? variable))
                     {
-                        return FindRef(variable!, out value);
+                        return FindJSONRef(variable!, out value);
+                    }
+                    else if (IsEnvRef(value, out variable))
+                    {
+                        return FindEnvRef(variable!, out value);
                     }
 
                     return true;
@@ -237,8 +273,8 @@ internal class VariableJsonParser
                 int.TryParse(path[0], out int index);
                 JsonElement jsonElement = (JsonElement)((IList)node)[index]!;
 
-                IsRef(jsonElement, out string? variable);
-                FindRef(variable!, out object? refNode);
+                IsJSONRef(jsonElement, out string? variable);
+                FindJSONRef(variable!, out object? refNode);
 
                 JsonElement refJsonElement = (JsonElement)refNode!;
 
@@ -251,12 +287,16 @@ internal class VariableJsonParser
                     if (index < ((IList)node).Count)
                     {
                         JsonElement jsonElement = (JsonElement)((IList)node)[index]!;
-                        if (IsRef(jsonElement, out string? variable))
+                        if (IsJSONRef(jsonElement, out string? variable))
                         {
-                            FindRef(variable!, out object? refNode);
+                            FindJSONRef(variable!, out object? refNode);
                             JsonElement refJsonElement = (JsonElement)refNode!;
                             value = refJsonElement;
                             return true;
+                        }
+                        else if (IsEnvRef(jsonElement, out variable))
+                        {
+                            return FindEnvRef(variable!, out value);
                         }
                         else
                         {

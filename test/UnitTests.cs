@@ -1,6 +1,6 @@
-using NUnit.Framework;
 using System.Diagnostics;
 using System.Text.Json;
+using NUnit.Framework;
 using VariableJson;
 
 namespace test;
@@ -223,5 +223,50 @@ public class Tests
 
         Assert.NotNull(ex);
         Assert.That(ex!.Message, Is.EqualTo("Variable c.d.z not found."));
+    }
+
+    [Test]
+    public void Test23()
+    {
+        Environment.SetEnvironmentVariable("bar", "bar");
+        LoadData(out string inputData, out string truthData);
+        GenericTest(inputData, truthData);
+    }
+
+    [Test]
+    public void Test24()
+    {
+        Environment.SetEnvironmentVariable("bar", "bar");
+        LoadData(out string inputData, out string truthData);
+        GenericTest(inputData, truthData);
+    }
+
+    [Test]
+    public void Test25()
+    {
+        Environment.SetEnvironmentVariable("bar", null);
+        LoadData(out string inputData, out string truthData);
+        KeyNotFoundException? ex = Assert.Throws<KeyNotFoundException>(() => GenericTest(inputData, truthData));
+
+        Assert.NotNull(ex);
+        Assert.That(ex!.Message, Is.EqualTo("Environment variable bar not found."));
+    }
+
+    [Test]
+    public void Test26()
+    {
+        Environment.SetEnvironmentVariable("a", "a");
+        Environment.SetEnvironmentVariable("c", "c");
+        Environment.SetEnvironmentVariable("d", "d");
+        LoadData(out string inputData, out string truthData);
+        GenericTest(inputData, truthData);
+    }
+
+    [Test]
+    public void Test27()
+    {
+        Environment.SetEnvironmentVariable("a", "a");
+        LoadData(out string inputData, out string truthData);
+        GenericTest(inputData, truthData);
     }
 }
