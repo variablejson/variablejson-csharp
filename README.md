@@ -128,6 +128,35 @@ You cannot reference objects that are not stored in the variable container. For 
 
 This will throw an exception because `fizz` references a variable that does not exist in the variable container.
 
+Lastly, you can also reference environment variables using `$[EnvironmentVariableName]`
+
+```json
+{
+  "PATH": "$(PATH)"
+}
+```
+
+When referencing **only** environment variables you do not need to specify a variable container, it won't be used. You may use both environment variables and variables in the same JSON file.
+
+```json
+{
+  "$vars": {
+    "name": "John Doe"
+  },
+  "johndoe": "$(name)",
+  "PATH": "$[PATH]"
+}
+```
+
+which produces
+
+```json
+{
+  "johndoe": "John Doe",
+  "PATH": "..." // varies by system
+}
+```
+
 ### Usage
 
 > **Note**
