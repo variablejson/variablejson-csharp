@@ -132,7 +132,7 @@ Lastly, you can also reference environment variables using `$[EnvironmentVariabl
 
 ```json
 {
-  "PATH": "$(PATH)"
+  "PATH": "$[PATH]"
 }
 ```
 
